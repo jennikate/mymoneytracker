@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+
+model ExpenseType {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label     String       @db.VarChar(255)
+  payments  Payment[]
+}
+
+model PaymentType {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label     String    @db.VarChar(255)
+  payments  Payment[]
+}
+
+model Payment {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  expenseType   ExpenseType @relation(fields: [expenseTypeId], references: [id])
+  expenseTypeId String      @db.Uuid
+  paymentType   PaymentType @relation(fields: [paymentTypeId], references: [id]) 
+  paymentTypeId String      @db.Uuid
+  date          DateTime    @default(now())
+  paidTo        String      @db.VarChar(255)
+  amount        Decimal     @db.Decimal(9,2)
+}
