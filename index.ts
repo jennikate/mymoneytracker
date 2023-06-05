@@ -84,10 +84,10 @@ app.get('/payments', async (req, res) => {
 
 /* TODO: you can delete a payment */
 
-/* TODO: you can add multiple payments in one go */
-
+/* TODO: add error responses */
 /* TODO: add filters see https://www.prisma.io/docs/concepts/overview/prisma-in-your-stack/rest */
 /* TODO: get a specific item see https://github.com/prisma/prisma-examples/blob/latest/typescript/rest-express/src/index.ts */
+
 
 const server  =app.listen(5000, () => 
 console.log('Server ready at localhost 5000'))
