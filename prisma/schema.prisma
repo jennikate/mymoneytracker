@@ -10,29 +10,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-
-
-
 model ExpenseType {
   id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  label     String       @db.VarChar(255)
+  label     String       @db.VarChar(255) @unique
   payments  Payment[]
 }
 
 model PaymentType {
-  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  label     String    @db.VarChar(255)
+  id        String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  label     String        @db.VarChar(255) @unique
   payments  Payment[]
 }
 
+model Recipient {
+  id          String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String        @db.VarChar(255) @unique
+  payments    Payment[]
+}
+
 model Payment {
-  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   expenseType   ExpenseType @relation(fields: [expenseTypeId], references: [id])
   expenseTypeId String      @db.Uuid
   paymentType   PaymentType @relation(fields: [paymentTypeId], references: [id]) 
   paymentTypeId String      @db.Uuid
   date          DateTime    @default(now())
-  paidTo        String      @db.VarChar(255)
+  recipient     Recipient   @relation(fields: [recipientId], references: [id]) 
+  recipientId   String      @db.Uuid
   amount        Decimal     @db.Decimal(9,2)
 }
