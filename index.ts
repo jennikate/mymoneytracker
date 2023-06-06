@@ -6,21 +6,37 @@ const app = express();
 
 app.use(express.json());
 
+// https://www.prisma.io/docs/reference/api-reference/error-reference
+
 /* you can add a new expense type */
 app.post('/expense-type', async (req, res) => {
   const { label } = req.body
-  const result = await prisma.expenseType.create({
-    data: {
-      label
+  let result;
+  
+  try {
+    result = await prisma.expenseType.create({
+      data: {
+        label
+      }
+    })
+    res.json(result)
+  } catch (error) {
+    let errorResponse;
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      errorResponse = 'Missing field make sure label exists'
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      errorResponse = 'Expense type already exists'
+    } else {
+      errorResponse = 'Something has gone wrong'
     }
-  })
-  res.json(result)
+    res.json(errorResponse)
+  } 
 })
 
 /* you can get expense types */
 app.get('/expense-type', async (req, res) => {
   const expenseTypes = await prisma.expenseType.findMany()
-  res.json(expenseTypes)
+  res.send(expenseTypes)
 })
 
 /* you can add a new payment type */
@@ -37,7 +53,7 @@ app.post('/payment-type', async (req, res) => {
 /* you can get payment types */
 app.get('/payment-type', async (req, res) => {
   const paymentTypes = await prisma.paymentType.findMany()
-  res.json(paymentTypes)
+  res.send(paymentTypes)
 })
 
 /* you can add a new recipient */
@@ -54,7 +70,7 @@ app.post('/recipient', async (req, res) => {
 /* you can get recipients */
 app.get('/recipient', async (req, res) => {
   const recipients = await prisma.recipient.findMany()
-  res.json(recipients)
+  res.send(recipients)
 })
 
 /* you can add a new payment */
@@ -77,7 +93,7 @@ app.get('/payments', async (req, res) => {
   const payment = await prisma.payment.findMany({
     include: { expenseType: true, paymentType: true, recipient: true }
   })
-  res.json(payment)
+  res.send(payment)
 })
 
 /* TODO: you can add update an existing payment */
