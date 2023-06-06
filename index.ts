@@ -6,8 +6,10 @@ const app = express();
 
 app.use(express.json());
 
-// TODO: improve error handling, currently very blunt force
-// https://www.prisma.io/docs/reference/api-reference/error-reference
+// TODO: improve error handling, currently very blunt force -> https://www.prisma.io/docs/reference/api-reference/error-reference
+// TODO:  You can UPDATE
+// TODO: add filters -> https://www.prisma.io/docs/concepts/components/prisma-client/crud#delete
+
 
 /* you can POST */
 app.post('/expense-type', async (req, res) => {
@@ -128,16 +130,13 @@ app.get('/payments', async (req, res) => {
 });
 
 app.get('/payments/:id', async (req, res) => {
-  const payment = await prisma.payment.findMany({
+  const payment = await prisma.payment.findUnique({
     where: {
       id: req.params.id,
     },
   });
   res.send(payment)
 });
-
-
-/* You can UPDATE */
 
 /* You can DELETE */
 app.delete('/expense-type/:id', async (req, res) => {
@@ -175,14 +174,6 @@ app.delete('/payments/:id', async (req, res) => {
   });
   res.send(deleteItem);
 });
-
-/* TODO: you can update an existing payment */
-
-/* TODO: you can delete a payment */
-
-/* TODO: add filters see https://www.prisma.io/docs/concepts/overview/prisma-in-your-stack/rest */
-/* TODO: get a specific item see https://github.com/prisma/prisma-examples/blob/latest/typescript/rest-express/src/index.ts */
-
 
 const server  =app.listen(5000, () => 
 console.log('Server ready at localhost 5000'))
