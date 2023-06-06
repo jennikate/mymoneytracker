@@ -99,17 +99,30 @@ app.get('/recipient', async (req, res) => {
 
 /* you can add a new payment */
 app.post('/payment', async (req, res) => {
-  const { id, expenseTypeId, paymentTypeId, recipientId, date, paidTo, amount } = req.body
-  const result = await prisma.payment.create({
-    data: {
-      expenseType:  { connect: { id: expenseTypeId } },
-      paymentType:  { connect: { id: paymentTypeId } },
-      date,
-      recipient: { connect: { id: recipientId }},
-      amount
+  const { expenseTypeId, paymentTypeId, recipientId, date, paidTo, amount } = req.body
+  try {
+    const result = await prisma.payment.create({
+      data: {
+        expenseType:  { connect: { id: expenseTypeId } },
+        paymentType:  { connect: { id: paymentTypeId } },
+        date,
+        recipient: { connect: { id: recipientId }},
+        amount
+      }
+    })
+    res.json(result)
+  } catch (error) {
+    let errorResponse;
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      errorResponse = 'Missing field(s))'
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+      errorResponse = error.meta
+    } else {
+      console.log(error)
+      errorResponse = 'Something has gone wrong'
     }
-  })
-  res.json(result)
+    res.json(errorResponse)
+  } 
 })
 
 /* You can get all payments */
