@@ -9,7 +9,7 @@ app.use(express.json());
 // TODO: improve error handling, currently very blunt force
 // https://www.prisma.io/docs/reference/api-reference/error-reference
 
-/* you can add a new expense type */
+/* you can POST */
 app.post('/expense-type', async (req, res) => {
   const { label } = req.body
   
@@ -31,15 +31,8 @@ app.post('/expense-type', async (req, res) => {
     }
     res.json(errorResponse)
   } 
-})
+});
 
-/* you can get expense types */
-app.get('/expense-type', async (req, res) => {
-  const expenseTypes = await prisma.expenseType.findMany()
-  res.send(expenseTypes)
-})
-
-/* you can add a new payment type */
 app.post('/payment-type', async (req, res) => {
   const { label } = req.body
   try {
@@ -60,15 +53,8 @@ app.post('/payment-type', async (req, res) => {
     }
     res.json(errorResponse)
   }  
-})
+});
 
-/* you can get payment types */
-app.get('/payment-type', async (req, res) => {
-  const paymentTypes = await prisma.paymentType.findMany()
-  res.send(paymentTypes)
-})
-
-/* you can add a new recipient */
 app.post('/recipient', async (req, res) => {
   const { name } = req.body
   try {
@@ -91,13 +77,6 @@ app.post('/recipient', async (req, res) => {
   } 
 })
 
-/* you can get recipients */
-app.get('/recipient', async (req, res) => {
-  const recipients = await prisma.recipient.findMany()
-  res.send(recipients)
-})
-
-/* you can add a new payment */
 app.post('/payment', async (req, res) => {
   const { expenseTypeId, paymentTypeId, recipientId, date, paidTo, amount } = req.body
   try {
@@ -125,13 +104,77 @@ app.post('/payment', async (req, res) => {
   } 
 })
 
-/* You can get all payments */
+/* You can READ */
+app.get('/expense-type', async (req, res) => {
+  const expenseTypes = await prisma.expenseType.findMany()
+  res.send(expenseTypes)
+});
+
+app.get('/payment-type', async (req, res) => {
+  const paymentTypes = await prisma.paymentType.findMany()
+  res.send(paymentTypes)
+});
+
+app.get('/recipient', async (req, res) => {
+  const recipients = await prisma.recipient.findMany()
+  res.send(recipients)
+});
+
 app.get('/payments', async (req, res) => {
   const payment = await prisma.payment.findMany({
     include: { expenseType: true, paymentType: true, recipient: true }
   })
   res.send(payment)
-})
+});
+
+app.get('/payments/:id', async (req, res) => {
+  const payment = await prisma.payment.findMany({
+    where: {
+      id: req.params.id,
+    },
+  });
+  res.send(payment)
+});
+
+
+/* You can UPDATE */
+
+/* You can DELETE */
+app.delete('/expense-type/:id', async (req, res) => {
+  const deleteItem = await prisma.expenseType.delete({
+    where: {
+      id: req.params.id,
+    },
+  });
+  res.send(deleteItem);
+});
+
+app.delete('/payment-type/:id', async (req, res) => {
+  const deleteItem = await prisma.paymentType.delete({
+    where: {
+      id: req.params.id,
+    },
+  });
+  res.send(deleteItem);
+});
+
+app.delete('/recipient/:id', async (req, res) => {
+  const deleteItem = await prisma.recipient.delete({
+    where: {
+      id: req.params.id,
+    },
+  });
+  res.send(deleteItem);
+});
+
+app.delete('/payments/:id', async (req, res) => {
+  const deleteItem = await prisma.payment.delete({
+    where: {
+      id: req.params.id,
+    },
+  });
+  res.send(deleteItem);
+});
 
 /* TODO: you can update an existing payment */
 
