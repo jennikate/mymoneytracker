@@ -6,15 +6,15 @@ const app = express();
 
 app.use(express.json());
 
+// TODO: improve error handling, currently very blunt force
 // https://www.prisma.io/docs/reference/api-reference/error-reference
 
 /* you can add a new expense type */
 app.post('/expense-type', async (req, res) => {
   const { label } = req.body
-  let result;
   
   try {
-    result = await prisma.expenseType.create({
+    const result = await prisma.expenseType.create({
       data: {
         label
       }
@@ -42,12 +42,24 @@ app.get('/expense-type', async (req, res) => {
 /* you can add a new payment type */
 app.post('/payment-type', async (req, res) => {
   const { label } = req.body
-  const result = await prisma.paymentType.create({
-    data: {
-      label
+  try {
+    const result = await prisma.paymentType.create({
+      data: {
+        label
+      }
+    })
+    res.json(result)
+  } catch (error) {
+    let errorResponse;
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      errorResponse = 'Missing field make sure label exists'
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      errorResponse = 'Payment type already exists'
+    } else {
+      errorResponse = 'Something has gone wrong'
     }
-  })
-  res.json(result)
+    res.json(errorResponse)
+  }  
 })
 
 /* you can get payment types */
@@ -59,12 +71,24 @@ app.get('/payment-type', async (req, res) => {
 /* you can add a new recipient */
 app.post('/recipient', async (req, res) => {
   const { name } = req.body
-  const result = await prisma.recipient.create({
-    data: {
-      name
+  try {
+    const result = await prisma.recipient.create({
+      data: {
+        name
+      }
+    })
+    res.json(result)
+  } catch (error) {
+    let errorResponse;
+    if (error instanceof Prisma.PrismaClientValidationError) {
+      errorResponse = 'Missing field make sure label exists'
+    } else if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      errorResponse = 'Payment type already exists'
+    } else {
+      errorResponse = 'Something has gone wrong'
     }
-  })
-  res.json(result)
+    res.json(errorResponse)
+  } 
 })
 
 /* you can get recipients */
@@ -96,11 +120,10 @@ app.get('/payments', async (req, res) => {
   res.send(payment)
 })
 
-/* TODO: you can add update an existing payment */
+/* TODO: you can update an existing payment */
 
 /* TODO: you can delete a payment */
 
-/* TODO: add error responses */
 /* TODO: add filters see https://www.prisma.io/docs/concepts/overview/prisma-in-your-stack/rest */
 /* TODO: get a specific item see https://github.com/prisma/prisma-examples/blob/latest/typescript/rest-express/src/index.ts */
 
