@@ -184,6 +184,8 @@ console.log('Server ready at localhost 5000'))
  * I can create a payment type e.g. cash, cc, debit card, direct debit, money transfer
  * I can create an expense type e.g. entertainment
  * I can create a recipient e.g Starbucks
+ * 
+ * 
  * TODO: 
  * I can create a payment source e.g. Santander, HSBC, cash
  * I can GET all payments in a date range
@@ -205,3 +207,8 @@ console.log('Server ready at localhost 5000'))
  * update POST payment to include source (payment_source) & to calc new balance
  * update POST payment to include a description field
  * all the gets
+ * 
+ * 
+ * 
+ * b 000 996 124 - 176 741 6121
+ */
