@@ -177,3 +177,31 @@ app.delete('/payments/:id', async (req, res) => {
 
 const server  =app.listen(5000, () => 
 console.log('Server ready at localhost 5000'))
+
+
+/*
+ * ENDPOINTS & DB EXIST FOR
+ * I can create a payment type e.g. cash, cc, debit card, direct debit, money transfer
+ * I can create an expense type e.g. entertainment
+ * I can create a recipient e.g Starbucks
+ * TODO: 
+ * I can create a payment source e.g. Santander, HSBC, cash
+ * I can GET all payments in a date range
+ * I can GET all payments by expense type
+ * I can GET all payments by payment type
+ * I can GET all payments by recipient
+ * I can GET all payments by source
+ * I can combine all filters about and return when all match
+ * 
+ * I can manually update the current balance in a source
+ * I can POST a deposit to the source which updates the total
+ * When I add a new payment it automatically deducts the amount from the source
+ * I can view the balance of a source
+ * 
+ * ADD
+ * POST payment_source
+ * POST deposit
+ * GET payment_source value
+ * update POST payment to include source (payment_source) & to calc new balance
+ * update POST payment to include a description field
+ * all the gets
